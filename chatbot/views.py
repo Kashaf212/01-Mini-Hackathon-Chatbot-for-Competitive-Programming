@@ -22,24 +22,26 @@ from pathlib import Path
 from langchain_community.document_loaders import CSVLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
-from google.colab import drive
-drive.mount('/content/drive')
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
-doc_path = ["databases\database.csv", "databases/Leetcode_Questions.csv", "databases/leetcode.csv"]
+
+doc_path = [BASE_DIR / "chatbot/databases/database.csv", BASE_DIR / "chatbot/databases/Leetcode_Questions.csv"]
 docs = []
 for doc_file in doc_path:
   file_path = Path(doc_file)
   print(doc_file)
+  if not file_path.exists():
+      print(f"File {doc_file} does not exist. Check the path.")
+      continue
   try:
-    if doc_file.endswith (".csv"):
-      loader = CSVLoader(file_path)
+    if doc_file.endswith(".csv"):
+      loader = CSVLoader(doc_file)
     elif doc_file.endswith(".pdf"):
-      loader = PyPDFLoader(file_path)
+      loader = PyPDFLoader(doc_file)
     elif doc_file.endswith(".docx"):
-      loader = Docx2txtLoader(file_path)
+      loader = Docx2txtLoader(doc_file)
     elif doc_file.endswith(".txt") or doc_file.endswith(".md"):
-      loader = TextLoader(file_path)
+      loader = TextLoader(doc_file)
     else:
       print(f"DocumentType {doc_file.type} not supported.")
       continue
